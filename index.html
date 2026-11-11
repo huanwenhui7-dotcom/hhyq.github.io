@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>后会友期 · 性格图鉴测评</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: {
+              50: '#FFFDF9',
+              100: '#FAF4EB',
+              200: '#F5E9D7',
+            },
+            sunset: {
+              DEFAULT: '#FF7E47',
+              hover: '#E8662F',
+              light: '#FFEAE0'
+            },
+            sky: {
+              DEFAULT: '#4B9CE3',
+              light: '#E6F3FC'
+            },
+            mint: {
+              DEFAULT: '#4EBA8A',
+              light: '#E4F6ED'
+            },
+            pinkish: {
+              DEFAULT: '#F792A5',
+              light: '#FDECF0'
+            },
+            character: {
+              zm: '#FF6B6B',
+              mty: '#4ECDC4',
+              ln: '#FFE66D',
+              xf: '#1A535C',
+              wje: '#9B51E0',
+              wzx: '#2F80ED',
+              qz: '#F2994A',
+              bxc: '#4F4F4F'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+          },
+          boxShadow: {
+            'ticket': '0 8px 24px -4px rgba(255, 126, 71, 0.15), 0 4px 12px -2px rgba(0, 0, 0, 0.05)',
+            'pop': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+    .font-cartoon { font-family: 'ZCOOL KuaiLe', cursive, sans-serif; }
+    .bg-paper {
+      background-color: #FAF4EB;
+      background-image: radial-gradient(#EADEC9 0.75px, transparent 0.75px), radial-gradient(#EADEC9 0.75px, #FAF4EB 0.75px);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+    }
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1.5deg); }
+    }
+    .animate-float { animation: floatSlow 4s ease-in-out infinite; }
+    @keyframes seesaw {
+      0% { transform: rotate(-8deg); }
+      50% { transform: rotate(8deg); }
+      100% { transform: rotate(-8deg); }
+    }
+    .animate-seesaw { animation: seesaw 2.2s ease-in-out infinite; transform-origin: center center; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #FAF4EB; }
+    ::-webkit-scrollbar-thumb { background: #FFB394; border-radius: 4px; }
+    .slide-in-right { animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .slide-out-left { animation: slideOutLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes slideInRight { from { transform: translateX(100%) scale(0.95); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+    @keyframes slideOutLeft { from { transform: translateX(0) scale(1); opacity: 1; } to { transform: translateX(-100%) scale(0.95); opacity: 0; } }
+  </style>
+</head>
+<body class="bg-slate-900 min-h-screen text-slate-800 flex justify-center items-center font-sans antialiased selection:bg-sunset selection:text-white">
+
+  <div id="app-container" class="w-full max-w-[500px] h-screen sm:h-[900px] bg-paper shadow-2xl relative overflow-hidden flex flex-col justify-between sm:rounded-[36px] border-4 border-slate-800/10">
+
+    <!-- Top Floating Sound & Admin Entrance -->
+    <div class="absolute top-4 right-4 z-40 flex items-center gap-2">
+      <button onclick="openAdminModal()" class="w-10 h-10 rounded-full bg-slate-800/80 backdrop-blur border-2 border-slate-700/20 shadow-md flex items-center justify-center text-amber-400 hover:scale-105 active:scale-95 transition-all" title="管理员后台 / 状态查看">
+        <i class="fa-solid fa-user-shield"></i>
+      </button>
+      <button id="sound-btn" onclick="toggleSound()" class="w-10 h-10 rounded-full bg-white/80 backdrop-blur border-2 border-slate-700/20 shadow-md flex items-center justify-center text-slate-700 hover:scale-105 active:scale-95 transition-all" title="音效开关">
+        <i id="sound-icon" class="fa-solid fa-volume-high text-sunset"></i>
+      </button>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- PAGE 1: LANDING PAGE -->
+    <!-- ================================================================= -->
+    <section id="page-landing" class="page-view flex-1 flex flex-col justify-between p-5 relative overflow-y-auto">
+      <div class="absolute top-0 left-0 w-full h-48 bg-gradient-to-b from-sky-light/80 to-transparent pointer-events-none -z-0"></div>
+      
+      <div class="pt-6 text-center z-10">
+        <div class="inline-block bg-sunset text-white text-xs px-3 py-1 rounded-full font-bold tracking-wider mb-2 shadow-sm animate-bounce">
+          <i class="fa-solid fa-compass mr-1"></i> 18天高原旅行 · 4对旧友人设重合度测试
+        </div>
+        <h1 class="font-cartoon text-4xl sm:text-5xl text-slate-800 tracking-wide drop-shadow-sm flex justify-center items-center gap-2">
+          后会友期 <span class="text-sunset text-3xl font-sans">·</span> 性格图鉴
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-600 mt-2 font-medium bg-white/70 backdrop-blur-xs py-1 px-4 rounded-full inline-block border border-slate-200/50">
+          测一测，你最像四对旧友里的哪一位？
+        </p>
+      </div>
+
+      <div class="my-auto py-4 relative z-10">
+        <div class="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto flex items-center justify-center">
+          <div class="w-24 h-24 rounded-full bg-white shadow-lg border-2 border-sunset/30 flex flex-col items-center justify-center text-center p-2 z-10 animate-float">
+            <i class="fa-solid fa-map-location-dot text-2xl text-sunset mb-1"></i>
+            <span class="text-[11px] font-bold text-slate-700 leading-tight">8位旧友<br>性格阵营</span>
+          </div>
+          <div id="avatar-circle-container" class="absolute inset-0"></div>
+        </div>
+        <p class="text-center text-[11px] text-slate-400 mt-2">
+          <i class="fa-solid fa-hand-pointer text-sunset/70 mr-1"></i>点击或悬停头像查看性格暗号
+        </p>
+      </div>
+
+      <div class="space-y-3 z-10 pb-4">
+        <button onclick="requestUserTestAccess()" class="w-full py-4 bg-gradient-to-r from-sunset to-amber-500 hover:from-sunset-hover hover:to-amber-600 text-white rounded-2xl shadow-ticket font-cartoon text-2xl tracking-wider flex items-center justify-center gap-2 transform active:scale-98 transition-all border-b-4 border-amber-700/40">
+          <i class="fa-solid fa-paper-plane"></i>
+          开始赴约
+        </button>
+
+        <div class="flex items-center justify-center gap-3 text-[11px] text-slate-500">
+          <span><i class="fa-solid fa-key text-sunset mr-1"></i>用户需一次性密码</span>
+          <span>•</span>
+          <span><i class="fa-solid fa-users text-mint mr-1"></i>全网已测 <strong id="total-users-counter" class="text-slate-800 font-mono">128</strong> 人</span>
+        </div>
+
+        <button onclick="openModal('compendium-modal')" class="w-full py-2.5 bg-white/80 hover:bg-white text-slate-700 rounded-xl border border-slate-300/80 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm">
+          <i class="fa-solid fa-users text-sky"></i>
+          先看看 8 位嘉宾图鉴档案
+        </button>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- PAGE 2: RULES / TICKET PAGE -->
+    <!-- ================================================================= -->
+    <section id="page-rules" class="page-view hidden flex-1 flex flex-col justify-between p-5 relative overflow-y-auto">
+      <div class="flex items-center justify-between pt-2">
+        <button onclick="goToPage('page-landing')" class="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-sm">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <span class="text-xs font-bold text-slate-500">第 1 步 / 共 2 步</span>
+      </div>
+
+      <div class="my-auto space-y-4 py-4">
+        <div class="bg-white rounded-3xl p-6 border-2 border-slate-300 shadow-ticket ticket-edge space-y-4 relative">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-sunset text-white text-[11px] px-3 py-0.5 rounded-full font-bold shadow">
+            🎟️ 赴约旅行票根
+          </div>
+          
+          <div class="text-center pt-2">
+            <h3 class="font-cartoon text-2xl text-slate-800">作答须知</h3>
+            <p class="text-xs text-slate-500 mt-1">请保持内心直觉，选出最符合你真实反应的一项。</p>
+          </div>
+
+          <div class="space-y-2 text-xs text-slate-600 bg-cream-50 p-3.5 rounded-2xl border border-cream-200">
+            <div class="flex items-start gap-2">
+              <i class="fa-solid fa-circle-check text-sunset mt-0.5"></i>
+              <span><strong>20道精选情境题</strong>：考察社交、边界、金钱与情绪反应。</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <i class="fa-solid fa-circle-check text-sunset mt-0.5"></i>
+              <span><strong>单次密码锁定</strong>：本次作答消耗当前卡密，再次测评需管理员颁发新码。</span>
+            </div>
+          </div>
+
+          <div id="silhouettes-grid" class="grid grid-cols-4 gap-2 pt-2">
+            <!-- Silhouettes rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="pb-4">
+        <button onclick="startQuiz()" class="w-full py-3.5 bg-sunset hover:bg-sunset-hover text-white rounded-2xl shadow-ticket font-cartoon text-xl tracking-wider flex items-center justify-center gap-2 transition-all">
+          我准备好了，出发 <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- PAGE 3: QUIZ PAGE -->
+    <!-- ================================================================= -->
+    <section id="page-quiz" class="page-view hidden flex-1 flex flex-col justify-between p-4 relative overflow-y-auto">
+      <!-- Top Track Progress & Train -->
+      <div class="space-y-2 pt-2">
+        <div class="flex justify-between items-center text-xs font-bold text-slate-600">
+          <span id="quiz-category-badge" class="bg-sky/20 text-sky px-2.5 py-0.5 rounded-full">社交主动</span>
+          <span id="quiz-progress-text" class="font-mono">第 1 / 20 题</span>
+        </div>
+        <!-- Progress Track Bar -->
+        <div class="relative w-full h-3 bg-slate-200 rounded-full overflow-visible">
+          <div id="quiz-progress-fill" class="absolute top-0 left-0 h-full bg-sunset rounded-full transition-all duration-300" style="width: 5%"></div>
+          <div id="quiz-car-icon" class="absolute -top-2.5 text-base transition-all duration-300" style="left: 0%">🚂</div>
+        </div>
+        <!-- Footprints checkpoints -->
+        <div id="footprints-row" class="flex justify-between text-[10px] text-slate-400 px-1 pt-0.5 font-mono"></div>
+      </div>
+
+      <!-- Center Question Card -->
+      <div class="my-auto py-2">
+        <div id="question-card" class="bg-white rounded-3xl p-5 border-2 border-slate-300 shadow-pop space-y-4 transition-all relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-sunset/5 rounded-bl-full pointer-events-none"></div>
+          
+          <h3 id="question-stem" class="font-cartoon text-lg sm:text-xl text-slate-800 leading-snug">
+            加载题目中...
+          </h3>
+
+          <div id="options-container" class="space-y-2.5 pt-2">
+            <!-- Options generated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Nav Bar -->
+      <div class="flex items-center justify-between pb-2">
+        <button id="prev-btn" onclick="prevQuestion()" class="px-4 py-2 bg-white border border-slate-300 text-slate-600 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm disabled:opacity-40" disabled>
+          <i class="fa-solid fa-arrow-left"></i> 上一题
+        </button>
+        <button onclick="restartQuizPrompt()" class="text-xs text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-rotate-right mr-1"></i> 重新开始
+        </button>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- PAGE 4: TRANSITION LOADING PAGE (友情天秤) -->
+    <!-- ================================================================= -->
+    <section id="page-transition" class="page-view hidden flex-1 flex flex-col items-center justify-center p-6 text-center space-y-6">
+      <div class="w-24 h-24 rounded-full bg-cream-100 border-4 border-sunset flex items-center justify-center text-4xl shadow-lg animate-bounce">
+        ⚖️
+      </div>
+      
+      <div class="space-y-2">
+        <h3 class="font-cartoon text-3xl text-slate-800">友情天秤计算中...</h3>
+        <p class="text-xs text-slate-500">正在分析你与 8 位旧友的性格重合度与能量场</p>
+      </div>
+
+      <!-- Seesaw Balance Illustration Container -->
+      <div class="w-full max-w-xs bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+        <div class="flex justify-between items-center text-xl">
+          <span id="scale-avatar-left" class="animate-pulse">👩‍💼</span>
+          <span class="animate-seesaw text-2xl">⚖️</span>
+          <span id="scale-avatar-right" class="animate-pulse">👨‍🌾</span>
+        </div>
+        <div id="scale-avatars-row" class="flex justify-center gap-1 flex-wrap pt-2 border-t border-slate-100">
+          <!-- Populated during transition -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- PAGE 5: RESULT PAGE (结果页) -->
+    <!-- ================================================================= -->
+    <section id="page-result" class="page-view hidden flex-1 flex flex-col justify-between p-5 relative overflow-y-auto">
+      
+      <!-- Top Result Header -->
+      <div class="text-center pt-2 space-y-1">
+        <span id="result-sub-tag" class="text-xs px-3 py-1 rounded-full font-bold bg-sunset/10 text-sunset inline-block">
+          热血张罗人 · 浓人版
+        </span>
+        <h2 id="result-title" class="font-cartoon text-3xl sm:text-4xl text-slate-800">
+          你是热血张罗人 · 张萌
+        </h2>
+        <p id="result-quote" class="text-xs text-slate-500 italic">
+          “有事随时找我，没有我办不成的局！”
+        </p>
+      </div>
+
+      <!-- Center Result Details Box -->
+      <div class="my-3 space-y-4">
+        
+        <!-- Big Avatar & Radar Chart Card -->
+        <div class="bg-white rounded-3xl p-5 border-2 border-slate-300 shadow-pop flex flex-col sm:flex-row items-center gap-4">
+          <div id="result-avatar-box" class="w-24 h-24 rounded-full bg-cream-100 border-4 border-sunset flex items-center justify-center text-5xl shadow-md shrink-0">
+            👩‍💼
+          </div>
+          <div class="w-full flex-1 text-center sm:text-left space-y-2">
+            <div id="result-tags-row" class="flex flex-wrap gap-1.5 justify-center sm:justify-start">
+              <!-- Tags rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 4-Dimensional Radar Chart Box -->
+        <div class="bg-white rounded-3xl p-4 border-2 border-slate-300 shadow-sm flex flex-col items-center">
+          <h4 class="font-cartoon text-xs text-slate-600 mb-1"><i class="fa-solid fa-chart-radar text-sunset mr-1"></i>性格维度雷达模型</h4>
+          <canvas id="radar-canvas" width="220" height="150" class="mx-auto"></canvas>
+        </div>
+
+        <!-- Friendship Portrait & Advice -->
+        <div class="bg-white rounded-3xl p-4 border-2 border-slate-300 shadow-sm space-y-3 text-xs text-slate-700 leading-relaxed">
+          <p id="result-portrait-text">
+            <!-- Populated by JS -->
+          </p>
+          <div class="border-t border-dashed border-slate-200 pt-3">
+            <p id="result-love-text" class="text-pinkish-700 font-medium">
+              <!-- Love / Intimate Relationship Advice Populated by JS -->
+            </p>
+          </div>
+        </div>
+
+        <!-- Match & Conflict Cards -->
+        <div class="grid grid-cols-2 gap-3">
+          <div id="result-match-box" class="bg-mint/10 border border-mint/30 rounded-2xl p-3 text-center space-y-1">
+            <span class="text-2xl">👨‍🌾</span>
+            <p class="text-[10px] text-mint font-bold uppercase">最合拍旧友</p>
+            <h5 id="result-match-name" class="font-bold text-xs text-slate-800">马天宇</h5>
+            <p id="result-match-desc" class="text-[10px] text-slate-500">互补降温，懂尊重边界</p>
+          </div>
+
+          <div id="result-conflict-box" class="bg-pinkish/10 border border-pinkish/30 rounded-2xl p-3 text-center space-y-1">
+            <span class="text-2xl">🕶️</span>
+            <p class="text-[10px] text-pinkish font-bold uppercase">容易闹别扭</p>
+            <h5 id="result-conflict-name" class="font-bold text-xs text-slate-800">白小纯</h5>
+            <p id="result-conflict-desc" class="text-[10px] text-slate-500">硬碰硬，互相觉得强势</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Action Buttons -->
+      <div class="space-y-2 pb-2">
+        <div class="flex gap-2">
+          <button onclick="openModal('share-modal')" class="flex-1 py-3 bg-sunset hover:bg-sunset-hover text-white rounded-xl text-xs font-bold shadow flex items-center justify-center gap-1.5 transition-all">
+            <i class="fa-solid fa-share-nodes"></i> 生成分享卡片
+          </button>
+          <button onclick="openModal('stats-modal')" class="px-4 py-3 bg-sky text-white rounded-xl text-xs font-bold shadow flex items-center justify-center gap-1 transition-all">
+            <i class="fa-solid fa-chart-pie"></i> 全网占比
+          </button>
+        </div>
+
+        <button onclick="restartQuiz()" class="w-full py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1 hover:bg-slate-50 transition-all">
+          <i class="fa-solid fa-rotate-right"></i> 再测一次 (需新兑换码)
+        </button>
+        <p class="text-[10px] text-center text-slate-400">✨ 结果仅供娱乐 • 欢迎收看芒果TV《后会友期》 ✨</p>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 1: USER CODE & ADMIN DASHBOARD MODAL -->
+    <!-- ================================================================= -->
+    <div id="admin-modal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex justify-center items-center p-4">
+      <div class="bg-paper w-full max-w-sm rounded-3xl p-5 border-2 border-slate-800/20 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto">
+        <button onclick="closeModal('admin-modal')" class="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold">✕</button>
+        
+        <!-- Toggle Tabs: User Code Validation vs Admin Management Console -->
+        <div class="flex border-b border-slate-200 pb-2 gap-4 justify-center font-cartoon text-lg">
+          <button id="tab-user-btn" onclick="switchModalTab('user')" class="text-sunset border-b-2 border-sunset pb-1 font-bold">
+            🔑 用户卡密验证
+          </button>
+          <button id="tab-admin-btn" onclick="switchModalTab('admin')" class="text-slate-400 pb-1 hover:text-slate-700">
+            🛡️ 管理员后台
+          </button>
+        </div>
+
+        <!-- SECTION A: USER CODE VERIFICATION -->
+        <div id="view-user-code" class="space-y-3">
+          <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 text-xs text-amber-900 leading-relaxed">
+            📢 <strong>双版本权限提示：</strong> 无论第1次还是第2次测试，用户均需输入管理员颁发的<strong>一次性有效兑换码</strong>。作答完成后卡密自动作废。
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">输入一次性测试兑换码：</label>
+            <input id="user-code-input" type="text" placeholder="如：FRIEND-8888" class="w-full px-3 py-2.5 text-xs font-mono bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-sunset uppercase">
+          </div>
+
+          <button onclick="verifyUserCodeAndStart()" class="w-full py-3 bg-sunset hover:bg-sunset-hover text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> 验证卡密并开始测试
+          </button>
+        </div>
+
+        <!-- SECTION B: ADMIN CONSOLE -->
+        <div id="view-admin-dashboard" class="hidden space-y-3">
+          <!-- Admin Auth Check -->
+          <div id="admin-auth-box" class="space-y-2">
+            <p class="text-xs text-slate-600 font-bold">管理员口令验证 (默认主密码 8888，免密码直接进入)</p>
+            <div class="flex gap-2">
+              <input id="admin-master-input" type="password" placeholder="输入管理员密码 (默认 8888)" class="flex-1 px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-sunset">
+              <button onclick="loginAdminMaster()" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold shrink-0">
+                登录后台
+              </button>
+            </div>
+          </div>
+
+          <!-- Logged In Admin Dashboard -->
+          <div id="admin-console-box" class="hidden space-y-4">
+            <!-- Counter Card -->
+            <div class="bg-slate-800 text-white p-3.5 rounded-2xl flex items-center justify-between shadow">
+              <div>
+                <p class="text-[10px] text-slate-400">全网累积完成测评人数</p>
+                <p id="admin-counter-display" class="text-2xl font-cartoon text-amber-400">128 人</p>
+              </div>
+              <button onclick="adminDirectLaunch()" class="px-3 py-2 bg-gradient-to-r from-sunset to-amber-500 text-white rounded-xl text-xs font-bold shadow hover:scale-105 transition-all">
+                🚀 管理员免密无限测试
+              </button>
+            </div>
+
+            <!-- Passcodes Generation & List -->
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-slate-700">一次性兑换码管理</span>
+                <button onclick="generateNewPasscode()" class="px-2.5 py-1 bg-mint text-white rounded-lg text-[10px] font-bold">
+                  + 生成新密码
+                </button>
+              </div>
+              <p class="text-[10px] text-slate-400">用户用完即作废。您可以随时在下方生成或删除旧密码。</p>
+
+              <div class="border border-slate-100 rounded-xl overflow-hidden max-h-36 overflow-y-auto">
+                <table class="w-full text-[11px] text-left">
+                  <thead class="bg-slate-100 text-slate-500">
+                    <tr>
+                      <th class="p-1.5">一次性密码</th>
+                      <th class="p-1.5">状态</th>
+                      <th class="p-1.5 text-right">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="passcodes-list-body" class="divide-y divide-slate-100 font-mono">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 2: SHARE POSTER MODAL -->
+    <!-- ================================================================= -->
+    <div id="share-modal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex justify-center items-center p-4">
+      <div class="bg-paper w-full max-w-sm rounded-3xl p-5 border-2 border-slate-800/20 shadow-2xl relative flex flex-col items-center">
+        <button onclick="closeModal('share-modal')" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold z-20">✕</button>
+
+        <p class="text-xs font-bold text-slate-500 mb-3">长按保存图片或截图分享朋友圈/小红书</p>
+
+        <div id="share-poster-card" class="w-full bg-white rounded-2xl p-5 border-2 border-slate-300 shadow-lg text-center space-y-3 relative overflow-hidden">
+          <div class="bg-gradient-to-r from-sunset/20 to-sky/20 absolute top-0 left-0 right-0 h-2"></div>
+          
+          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">后会友期 · 性格图鉴</div>
+          
+          <div id="poster-avatar-box" class="w-20 h-20 mx-auto rounded-full bg-cream-100 border-2 border-sunset flex items-center justify-center text-4xl shadow">
+            👦
+          </div>
+
+          <div>
+            <h3 id="poster-title" class="font-cartoon text-2xl text-slate-800">热血张罗人 · 张萌</h3>
+            <p id="poster-quote" class="text-[11px] text-slate-500 italic mt-1">“有事随时找我，没有我办不成的局！”</p>
+          </div>
+
+          <div id="poster-tags" class="flex flex-wrap gap-1 justify-center"></div>
+
+          <div class="border-t border-dashed border-slate-200 pt-3 flex items-center justify-between text-left">
+            <div class="space-y-0.5">
+              <p class="text-[10px] font-bold text-slate-700">扫码测测你是哪位旧友？</p>
+              <p class="text-[9px] text-slate-400">18天高原旅行 · 4对旧友人设重合度</p>
+            </div>
+            <div class="w-12 h-12 bg-slate-800 rounded-lg p-1 text-white flex items-center justify-center text-[10px] font-mono">
+              [ QR ]
+            </div>
+          </div>
+        </div>
+
+        <button onclick="copyShareLink()" class="mt-4 w-full py-3 bg-mint hover:bg-mint/90 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow">
+          <i class="fa-solid fa-copy"></i> 复制专属分享文案
+        </button>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 3: GLOBAL STATS MODAL -->
+    <!-- ================================================================= -->
+    <div id="stats-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4">
+      <div class="bg-paper w-full max-w-sm rounded-3xl p-5 border-2 border-slate-800/20 shadow-2xl relative">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-cartoon text-xl text-slate-800"><i class="fa-solid fa-chart-pie text-sky mr-2"></i>全网人设类型分布</h3>
+          <button onclick="closeModal('stats-modal')" class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold">✕</button>
+        </div>
+        <p class="text-xs text-slate-500 mb-3">基于全网用户测评数据样本：</p>
+        
+        <div id="stats-bars-container" class="space-y-2.5 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 4: COMPENDIUM MODAL -->
+    <!-- ================================================================= -->
+    <div id="compendium-modal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex justify-center items-center p-4">
+      <div class="bg-paper w-full max-w-md rounded-3xl p-5 border-2 border-slate-800/20 shadow-2xl relative max-h-[85vh] overflow-y-auto space-y-3">
+        <div class="flex justify-between items-center sticky top-0 bg-paper py-2 z-10 border-b border-slate-200">
+          <h3 class="font-cartoon text-xl text-slate-800"><i class="fa-solid fa-book-open text-sunset mr-2"></i>8位嘉宾图鉴档案</h3>
+          <button onclick="closeModal('compendium-modal')" class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold">✕</button>
+        </div>
+        <div id="compendium-list" class="space-y-3 pt-1"></div>
+      </div>
+    </div>
+
+  </div> <!-- End App Container -->
+
+<!-- ================================================================= -->
+<!-- JAVASCRIPT LOGIC -->
+<!-- ================================================================= -->
+<script>
+  let soundEnabled = true;
+  let audioCtx = null;
+
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) audioCtx = new AudioContext();
+    }
+  }
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const soundIcon = document.getElementById('sound-icon');
+    if (soundEnabled) {
+      soundIcon.className = 'fa-solid fa-volume-high text-sunset';
+      playTone(600, 'sine', 0.1);
+    } else {
+      soundIcon.className = 'fa-solid fa-volume-xmark text-slate-400';
+    }
+  }
+
+  function playTone(freq, type = 'sine', duration = 0.1) {
+    if (!soundEnabled) return;
+    try {
+      initAudio();
+      if (!audioCtx) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch (e) {}
+  }
+
+  function playFanfareSound() {
+    if (!soundEnabled) return;
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((freq, idx) => {
+      setTimeout(() => playTone(freq, 'triangle', 0.2), idx * 120);
+    });
+  }
+
+  function goToPage(pageId) {
+    playTone(440, 'sine', 0.08);
+    document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+    const target = document.getElementById(pageId);
+    if (target) target.classList.remove('hidden');
+  }
+
+  function openModal(modalId) {
+    playTone(500, 'sine', 0.1);
+    const m = document.getElementById(modalId);
+    if (m) m.classList.remove('hidden');
+  }
+
+  function closeModal(modalId) {
+    playTone(350, 'sine', 0.08);
+    const m = document.getElementById(modalId);
+    if (m) m.classList.add('hidden');
+  }
+
+  /* ===================================================================
+     PASSWORD & ADMIN CONSOLE MANAGEMENT
+     =================================================================== */
+  const MASTER_ADMIN_KEY = "8888";
+  let activeSessionCode = null; // Tracks current user's used passcode
+
+  function getStoredPasscodes() {
+    const defaultCodes = [
+      { code: "FRIEND-8888", used: false },
+      { code: "FRIEND-6666", used: false },
+      { code: "RETRO-2026", used: false }
+    ];
+    const stored = localStorage.getItem('retro_passcodes_v3');
+    return stored ? JSON.parse(stored) : defaultCodes;
+  }
+
+  function savePasscodes(codes) {
+    localStorage.setItem('retro_passcodes_v3', JSON.stringify(codes));
+    renderAdminPasscodesList();
+  }
+
+  function getTotalUsersCount() {
+    return parseInt(localStorage.getItem('retro_total_users_count_v3') || '128', 10);
+  }
+
+  function incrementTotalUsersCount() {
+    const count = getTotalUsersCount() + 1;
+    localStorage.setItem('retro_total_users_count_v3', count.toString());
+    updateCounterDisplays();
+  }
+
+  function updateCounterDisplays() {
+    const count = getTotalUsersCount();
+    const c1 = document.getElementById('total-users-counter');
+    const c2 = document.getElementById('admin-counter-display');
+    if (c1) c1.innerText = count;
+    if (c2) c2.innerText = `${count} 人`;
+  }
+
+  function switchModalTab(tab) {
+    playTone(500, 'sine', 0.08);
+    const userView = document.getElementById('view-user-code');
+    const adminView = document.getElementById('view-admin-dashboard');
+    const tabUserBtn = document.getElementById('tab-user-btn');
+    const tabAdminBtn = document.getElementById('tab-admin-btn');
+
+    if (tab === 'user') {
+      userView.classList.remove('hidden');
+      adminView.classList.add('hidden');
+      tabUserBtn.className = 'text-sunset border-b-2 border-sunset pb-1 font-bold';
+      tabAdminBtn.className = 'text-slate-400 pb-1 hover:text-slate-700';
+    } else {
+      userView.classList.add('hidden');
+      adminView.classList.remove('hidden');
+      tabAdminBtn.className = 'text-sunset border-b-2 border-sunset pb-1 font-bold';
+      tabUserBtn.className = 'text-slate-400 pb-1 hover:text-slate-700';
+    }
+  }
+
+  function requestUserTestAccess() {
+    switchModalTab('user');
+    openModal('admin-modal');
+  }
+
+  function verifyUserCodeAndStart() {
+    const input = document.getElementById('user-code-input').value.trim().toUpperCase();
+    if (!input) {
+      alert("请输入管理员提供的一次性测试密码/兑换码！");
+      return;
+    }
+
+    const codes = getStoredPasscodes();
+    const found = codes.find(c => c.code === input);
+
+    if (!found) {
+      playTone(250, 'sawtooth', 0.2);
+      alert("❌ 密码无效或不存在！请联系管理员获取最新有效的一次性兑换码。");
+      return;
+    }
+
+    if (found.used) {
+      playTone(250, 'sawtooth', 0.2);
+      alert("⚠️ 该一次性密码已被使用并已作废！每次测评（包括第一次和第二次）均需向管理员请求全新未使用的密码。");
+      return;
+    }
+
+    // Valid code bind to session
+    activeSessionCode = found.code;
+    playTone(880, 'sine', 0.15);
+    closeModal('admin-modal');
+    document.getElementById('user-code-input').value = '';
+    goToPage('page-rules');
+  }
+
+  function loginAdminMaster() {
+    const pass = document.getElementById('admin-master-input').value.trim();
+    if (pass === MASTER_ADMIN_KEY || pass === "") {
+      playTone(880, 'sine', 0.2);
+      document.getElementById('admin-auth-box').classList.add('hidden');
+      document.getElementById('admin-console-box').classList.remove('hidden');
+      renderAdminPasscodesList();
+    } else {
+      playTone(250, 'sawtooth', 0.2);
+      alert("❌ 管理员主密码错误！(默认密码: 8888)");
+    }
+  }
+
+  function adminDirectLaunch() {
+    activeSessionCode = "ADMIN_UNLIMITED";
+    playTone(880, 'sine', 0.15);
+    closeModal('admin-modal');
+    goToPage('page-rules');
+  }
+
+  function generateNewPasscode() {
+    const randStr = Math.floor(1000 + Math.random() * 9000);
+    const newCode = `FRIEND-${randStr}`;
+    const codes = getStoredPasscodes();
+    codes.unshift({ code: newCode, used: false });
+    savePasscodes(codes);
+    playTone(600, 'sine', 0.1);
+  }
+
+  function deletePasscode(codeStr) {
+    let codes = getStoredPasscodes();
+    codes = codes.filter(c => c.code !== codeStr);
+    savePasscodes(codes);
+  }
+
+  function renderAdminPasscodesList() {
+    const tbody = document.getElementById('passcodes-list-body');
+    if (!tbody) return;
+    const codes = getStoredPasscodes();
+
+    if (codes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="p-2 text-center text-slate-400">暂无兑换码，请点击上方生成</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = codes.map(c => `
+      <tr class="${c.used ? 'bg-slate-50 text-slate-400' : 'text-slate-700'}">
+        <td class="p-1.5 font-bold">${c.code}</td>
+        <td class="p-1.5">
+          ${c.used ? '<span class="text-pinkish font-bold">已失效(已使用)</span>' : '<span class="text-mint font-bold">可用</span>'}
+        </td>
+        <td class="p-1.5 text-right">
+          <button onclick="deletePasscode('${c.code}')" class="text-slate-400 hover:text-pinkish">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openAdminModal() {
+    switchModalTab('admin');
+    openModal('admin-modal');
+  }
+
+  /* ===================================================================
+     CHARACTERS & QUESTION DATA
+     =================================================================== */
+  const CHARACTERS = [
+    {
+      id: 'zm',
+      name: '张萌',
+      title: '热血张罗人',
+      subtitle: '浓人版 · 局霸兜底者',
+      avatar: '👩‍💼',
+      color: '#FF6B6B',
+      quote: '“有啥好纠结的，这事我来安排！”',
+      tags: ['外向强势', '急性子', '主动兜底', '资源互通', '效率导向'],
+      portrait: '你是个极具能量感与号召力的“兜底侠”。在社交圈里你总是主动组局、解决困难的人。你直来直去讲求效率，只要朋友受了委屈你第一个冲上前仗义执言。',
+      advice: '【交友真心建议】你的热心肠非常可贵，但注意“过度的热情也是一种侵入”。给朋友留出独立消化情绪的空间，学会“后退半步”，善意才不会变成负担。',
+      loveAdvice: '【恋爱态度与建议】你在爱情里也是强势的主导者，爱得轰轰烈烈，习惯替伴侣安排一切。但恋爱不是项目管理，多倾听对方的真实情绪，不要把自己的意愿强加给伴侣，温柔的软化比替他搞定一切更具吸引力。',
+      match: { id: 'mty', name: '马天宇', desc: '互补降温，懂尊重边界' },
+      conflict: { id: 'bxc', name: '白小纯', desc: '硬碰硬，互相觉得强势' }
+    },
+    {
+      id: 'mty',
+      name: '马天宇',
+      title: '温柔淡人',
+      subtitle: '淡人版 · 清澈边界派',
+      avatar: '👨‍🌾',
+      color: '#4ECDC4',
+      quote: '“真诚问候，互不打扰，距离产生安全感。”',
+      tags: ['边界感强', '克制疏离', '怕人情捆绑', '内心柔软', '独立自足'],
+      portrait: '你有着极高的社交边界感与清澈的自洽力。对人真诚但绝不允许肆意越界，害怕沉重的人情捆绑。内心细腻敏感，习惯用温和的冷淡保护自己。',
+      advice: '【交友真心建议】自洽通透让人舒服，但过度的疏离会被误解为冷漠。适当向信任的朋友展现脆弱，试着接受别人的麻烦，关系反而更具粘性。',
+      loveAdvice: '【恋爱态度与建议】你在亲密关系中非常注重私人空间，讨厌被控制与情感道德绑架。你爱得克制体贴，但也容易在遇到矛盾时习惯性“退回安全壳”。多向伴侣敞开心扉表达需求，爱情需要温暖的碰撞而非完美的防线。',
+      match: { id: 'zm', name: '张萌', desc: '你提供沉静，她带来热情' },
+      conflict: { id: 'wje', name: '文吉儿', desc: '你的疏离会让她的友情洁癖受挫' }
+    },
+    {
+      id: 'ln',
+      name: '厉娜',
+      title: '佛系吃货',
+      subtitle: '松弛版 · 钝感治愈派',
+      avatar: '👩‍🍳',
+      color: '#F4C430',
+      quote: '“天大的事，等我吃饱睡一觉再说吧。”',
+      tags: ['松弛通透', '吃饭优先', '不争不抢', '鲜活可爱', '情绪钝感力'],
+      portrait: '你是社交圈里的“松弛感天花板”。面对人情世故自带钝感力，不刻意营业也不争抢内耗。比起较劲，你更关心吃喝与休息，存在本身就很治愈。',
+      advice: '【交友真心建议】佛系是生活智慧，但在关键矛盾上若一味逃避避谈，可能会让在乎你的人觉得不够重视。明确表达你的立场，松弛才更有力量。',
+      loveAdvice: '【恋爱态度与建议】跟你谈恋爱很轻松、没有内耗，是极其治愈的伴侣。但你在感情里容易显得过分随性甚至被动，让对方怀疑你的上心程度。偶尔准备一些有仪式感的惊喜，明确表达爱意，能给关系注入踏实的陪伴感。',
+      match: { id: 'xf', name: '许飞', desc: '一个倔强坚硬，一个温柔包容' },
+      conflict: { id: 'qz', name: '青稚', desc: '情绪上头时很难懂你的慢半拍' }
+    },
+    {
+      id: 'xf',
+      name: '许飞',
+      title: '倔强独行侠',
+      subtitle: '硬核版 · 真实傲骨派',
+      avatar: '🎸',
+      color: '#1A535C',
+      quote: '“我不善言辞，也懒得圆滑。”',
+      tags: ['独立骄傲', '尖锐直白', '不圆滑讨好', '嘴硬心软', '骨子傲气'],
+      portrait: '你身上有一股不妥协的傲骨与真实。不屑虚伪客套，说话直击要害。你极其独立，嘴上从不服软，但心里对认定的真心朋友比谁都掏心掏肺。',
+      advice: '【交友真心建议】真实最可贵，但直白与伤害仅一线之隔。稍微磨平一点刺，用柔和的方式表达关切，能避免误伤真正关心你的人。',
+      loveAdvice: '【恋爱态度与建议】你爱得纯粹且骄傲，宁缺毋滥。嘴硬心软的你常常用冷酷掩饰对受伤害的恐惧。在恋人面前不需要随时穿防弹衣，学会适度“服软”与坦露脆弱，会让你收获更有深度的灵魂共鸣。',
+      match: { id: 'ln', name: '厉娜', desc: '钝感力刚好包容你的尖锐' },
+      conflict: { id: 'wje', name: '文吉儿', desc: '你的硬核容易戳伤她的细腻敏感' }
+    },
+    {
+      id: 'wje',
+      name: '文吉儿',
+      title: '执念深情派',
+      subtitle: '浓人版 · 友情洁癖派',
+      avatar: '👩‍🎨',
+      color: '#9B51E0',
+      quote: '“我要做你心里独一无二的第一顺位。”',
+      tags: ['细腻敏感', '情感洁癖', '占有欲强', '爱翻旧账', '重情念旧'],
+      portrait: '你是个对感情有着极致追求的深情派。看重陪伴的纯粹性，眼里容不下沙子。能记住对方的所有细节，但伴随着强烈的占有欲与不安全感。',
+      advice: '【交友真心建议】深情很珍贵，但把全副情感押在一人身上会让人窒息。给关系松绑，接受“各有圈子”的常态，先充盈自己的内心。',
+      loveAdvice: '【恋爱态度与建议】在恋爱中你是绝对专注且浪漫的付出型，但也极易陷入“患得患失”的内耗漩涡。对伴侣有情感洁癖，容易因小事吃醋。记住，安全的爱源于强大的自我，降低掌控欲，爱才能自由呼吸。',
+      match: { id: 'wzx', name: '王子璇', desc: '理性边界带给你安全感' },
+      conflict: { id: 'mty', name: '马天宇', desc: '淡人的安全距离会触碰你的占有欲' }
+    },
+    {
+      id: 'wzx',
+      name: '王子璇',
+      title: '清醒止损者',
+      subtitle: '理性版 · 体面边界派',
+      avatar: '👩‍💻',
+      color: '#2F80ED',
+      quote: '“承认过去很美，但该止损时绝不拖泥带水。”',
+      tags: ['坦诚体面', '及时止损', '不拖泥带水', '不买单沉没成本', '边界干脆'],
+      portrait: '你是理智体面的止损专家。感恩过去的交情，但绝不被沉没成本绑架。当关系不再健康时，能冷静干脆地划清界限，不消耗自己也不折磨他人。',
+      advice: '【交友真心建议】清醒是护身符，但过度的“止损思维”会让感情缺乏缓冲。人无完人，给无心的过错一点修复的时间，关系会更有韧性。',
+      loveAdvice: '【恋爱态度与建议】你对待恋爱非常清醒理性，明确知道自己要什么，不合拍时绝不纠缠。但过度的理性有时会让亲密关系缺少浪漫与冲动。感情需要适当的“不理性”，尝试允许轻微的失控与包容缺点，爱会更有温度。',
+      match: { id: 'wje', name: '文吉儿', desc: '你能为她的焦虑提供清晰安心的解答' },
+      conflict: { id: 'qz', name: '青稚', desc: '他的上头崩溃在你看来缺乏理智' }
+    },
+    {
+      id: 'qz',
+      name: '青稚',
+      title: '情绪小太阳',
+      subtitle: '热血版 · 真性情兄弟',
+      avatar: '👦‍🧢',
+      color: '#F2994A',
+      quote: '“没啥是一顿酒解决不了的，我先干为敬！”',
+      tags: ['情绪外露', '先低头示好', '重情重义', '易上头易崩溃', '热得快'],
+      portrait: '你是毫无城府的情绪小太阳。喜怒哀乐全写在脸上，热血直爽。闹矛盾时最先按捺不住示好，情绪来得快去得也快，真诚得赤裸裸。',
+      advice: '【交友真心建议】真诚热烈极具感染力，但情绪大起大落让人无所适从。学会控制上头瞬间的言行，留 3 秒冷却缓冲，会更加成熟可靠。',
+      loveAdvice: '【恋爱态度与建议】在恋爱里你是个毫无保留的开心果，会毫无保留地把最好的给对方。但情绪化是你的双刃剑，吵架时容易冲动说狠话，事后又低头后悔。学会稳定情绪输出，给伴侣提供持续的安全感。',
+      match: { id: 'bxc', name: '白小纯', desc: '你的热情示好刚好融化他的冷硬外壳' },
+      conflict: { id: 'wzx', name: '王子璇', desc: '理性止损容易浇灭你的热血' }
+    },
+    {
+      id: 'bxc',
+      name: '白小纯',
+      title: '硬壳恩怨派',
+      subtitle: '冷感版 · 决绝护盾派',
+      avatar: '🕶️',
+      color: '#4F4F4F',
+      quote: '“爱恨分明，受过一次伤，门就上了锁。”',
+      tags: ['决绝冷硬', '恩怨分明', '自尊心极强', '拒不服软', '安全感高墙'],
+      portrait: '你是个拥有钢铁防线的防守型性格。极度重自尊，对你好的十倍奉还，但一旦遭到伤害会立刻关上心门绝不妥协，用恩怨分明保护自己。',
+      advice: '【交友真心建议】坚硬的外壳保护了你，但也隔绝了关怀。试着分辨“无意过失”与“恶意背叛”, 适度卸下防备，别让高墙困住自己。',
+      loveAdvice: '【恋爱态度与建议】你很难轻易动心，一旦爱上就是极度专一与护短。但极强的自尊心让你从不主动认错，常拉不下脸导致冷战。恋爱中试着放下防御铠甲，把柔软的一面展示给爱人，真心才能彻底交融。',
+      match: { id: 'qz', name: '青稚', desc: '他的真诚主动能撬动你的心门' },
+      conflict: { id: 'zm', name: '张萌', desc: '强势张罗容易踩中你的自尊防线' }
+    }
+  ];
+
+  function generate100Questions() {
+    const pool = [];
+    const shortTemplates = [
+      {
+        cat: '社交主动',
+        stems: [
+          "聚会刚开始气氛冷场，你会？",
+          "老友群连日没人说话，你？",
+          "旅行要选管钱的队长，你？",
+          "朋友想办派对拉你组局，你？",
+          "餐厅服务员态度不好，你？"
+        ],
+        opts: [
+          { text: "主动开场，打破尴尬找话题", weights: { zm: 4, qz: 2 } },
+          { text: "安静旁观，等别人先开口", weights: { mty: 4, wzx: 2 } },
+          { text: "无所谓，吃喝开心就行", weights: { ln: 4, mty: 1 } },
+          { text: "直言不满，不迁就硬撑", weights: { xf: 4, bxc: 2 } }
+        ]
+      },
+      {
+        cat: '冲突处理',
+        stems: [
+          "旅行时因路线分歧吵架，你？",
+          "开玩笑踩中你底线，你？",
+          "吐槽私信被截图转发，你？",
+          "共同朋友闹掰逼你站队，你？",
+          "发现老友背地评价你，你？"
+        ],
+        opts: [
+          { text: "当场说开，快速解决不憋着", weights: { zm: 4, qz: 2 } },
+          { text: "默默疏远，保持礼貌距离", weights: { mty: 4, wzx: 2 } },
+          { text: "过眼云烟，压根懒得内耗", weights: { ln: 4 } },
+          { text: "正面刚硬，当面翻旧账算清", weights: { xf: 4, bxc: 3 } }
+        ]
+      },
+      {
+        cat: '边界金钱',
+        stems: [
+          "朋友借钱未说归期，你？",
+          "朋友找你免费帮忙做专业事，你？",
+          "朋友未招呼带陌生人来私聚，你？",
+          "室友生活习惯邋遢，你？",
+          "朋友拿你隐私当社交谈资，你？"
+        ],
+        opts: [
+          { text: "仗义帮忙，但会当面提醒规矩", weights: { zm: 4, qz: 1 } },
+          { text: "明确婉拒，不触碰原则底线", weights: { wzx: 4, mty: 3 } },
+          { text: "随缘接受，只要不惹大麻烦", weights: { ln: 4 } },
+          { text: "当场变脸，冷酷表达不满", weights: { bxc: 4, xf: 3 } }
+        ]
+      },
+      {
+        cat: '情绪反应',
+        stems: [
+          "行程因大雨临时取消，你？",
+          "被真心朋友误解图名利，你？",
+          "最看重的朋友有了新死党，你？",
+          "遇到挫折崩溃的深夜，你？",
+          "好心兜底却被抱怨细节，你？"
+        ],
+        opts: [
+          { text: "情绪上头，立马要解释清楚", weights: { qz: 4, zm: 2 } },
+          { text: "表面平静，内心消化并拉开距离", weights: { mty: 4, wzx: 2 } },
+          { text: "吃顿好的，睡一觉万事皆空", weights: { ln: 4 } },
+          { text: "明显吃醋，占有欲强难以接受", weights: { wje: 4, xf: 2 } }
+        ]
+      }
+    ];
+
+    let count = 1;
+    for (let i = 0; i < 25; i++) {
+      shortTemplates.forEach(t => {
+        if (count > 100) return;
+        const s = t.stems[i % t.stems.length];
+        pool.push({
+          id: count,
+          category: t.cat,
+          stem: `${count}. ${s}`,
+          options: t.opts
+        });
+        count++;
+      });
+    }
+    return pool;
+  }
+
+  const ALL_100_QUESTIONS = generate100Questions();
+
+  let currentQuizQuestions = [];
+  let currentQuestionIndex = 0;
+  let userAnswers = []; 
+  let calculatedScores = {};
+
+  function select20Questions() {
+    const categories = ['社交主动', '冲突处理', '边界金钱', '情绪反应'];
+    let selected = [];
+    categories.forEach(cat => {
+      const catQuestions = ALL_100_QUESTIONS.filter(q => q.category === cat);
+      const shuffled = [...catQuestions].sort(() => 0.5 - Math.random());
+      selected.push(...shuffled.slice(0, 5));
+    });
+    return selected.sort(() => 0.5 - Math.random()).map(q => {
+      return {
+        ...q,
+        options: [...q.options].sort(() => 0.5 - Math.random())
+      };
+    });
+  }
+
+  function renderFootprints() {
+    const row = document.getElementById('footprints-row');
+    row.innerHTML = '';
+    for (let i = 0; i < 20; i += 4) {
+      row.innerHTML += `<span id="fp-${i}" class="transition-all">🐾 ${i+1}</span>`;
+    }
+  }
+
+  function renderCurrentQuestion() {
+    const q = currentQuizQuestions[currentQuestionIndex];
+    document.getElementById('quiz-category-badge').innerText = q.category;
+    document.getElementById('quiz-progress-text').innerText = `第 ${currentQuestionIndex + 1} / ${currentQuizQuestions.length} 题`;
+
+    const pct = Math.round(((currentQuestionIndex + 1) / currentQuizQuestions.length) * 100);
+    document.getElementById('quiz-progress-fill').style.width = `${pct}%`;
+    document.getElementById('quiz-car-icon').style.left = `calc(${pct}% - 8px)`;
+
+    for (let i = 0; i < 20; i += 4) {
+      const fp = document.getElementById(`fp-${i}`);
+      if (fp) {
+        fp.className = (i <= currentQuestionIndex) ? 'text-sunset font-bold scale-110' : 'text-slate-300';
+      }
+    }
+
+    document.getElementById('question-stem').innerText = q.stem;
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+
+    const optionLabels = ['A', 'B', 'C', 'D'];
+    const optionColors = ['border-l-sunset', 'border-l-sky', 'border-l-mint', 'border-l-pinkish'];
+
+    q.options.forEach((opt, idx) => {
+      const isSelected = userAnswers[currentQuestionIndex] === opt;
+      const btn = document.createElement('button');
+      btn.className = `w-full text-left p-3 rounded-2xl border-2 transition-all duration-200 flex items-center gap-3 transform active:scale-98 ${
+        isSelected 
+          ? 'bg-amber-50 border-sunset ring-2 ring-sunset/30 font-bold' 
+          : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+      } ${optionColors[idx % optionColors.length]} border-l-4 shadow-sm`;
+
+      btn.innerHTML = `
+        <span class="w-6 h-6 rounded-full ${isSelected ? 'bg-sunset text-white' : 'bg-slate-100 text-slate-600'} text-xs font-bold flex items-center justify-center shrink-0">
+          ${optionLabels[idx]}
+        </span>
+        <span class="text-xs sm:text-sm text-slate-700 leading-snug flex-1">${opt.text}</span>
+      `;
+
+      btn.onclick = () => selectOption(opt);
+      optionsContainer.appendChild(btn);
+    });
+
+    document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
+  }
+
+  function selectOption(opt) {
+    playTone(523.25, 'sine', 0.1);
+    userAnswers[currentQuestionIndex] = opt;
+
+    const card = document.getElementById('question-card');
+    card.classList.add('slide-out-left');
+
+    setTimeout(() => {
+      card.classList.remove('slide-out-left');
+      if (currentQuestionIndex < currentQuizQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderCurrentQuestion();
+        card.classList.add('slide-in-right');
+        setTimeout(() => card.classList.remove('slide-in-right'), 350);
+      } else {
+        finishQuizAndCalculate();
+      }
+    }, 200);
+  }
+
+  function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+      playTone(392.00, 'sine', 0.08);
+      currentQuestionIndex--;
+      renderCurrentQuestion();
+    }
+  }
+
+  function restartQuizPrompt() {
+    if (confirm("确定要放弃当前答题进度重新开始吗？")) {
+      startQuiz();
+    }
+  }
+
+  function restartQuiz() {
+    startQuiz();
+  }
+
+  function finishQuizAndCalculate() {
+    const scores = { zm: 0, mty: 0, ln: 0, xf: 0, wje: 0, wzx: 0, qz: 0, bxc: 0 };
+    userAnswers.forEach(ans => {
+      if (ans && ans.weights) {
+        Object.keys(ans.weights).forEach(charKey => {
+          scores[charKey] = (scores[charKey] || 0) + ans.weights[charKey];
+        });
+      }
+    });
+
+    calculatedScores = scores;
+
+    // CONSUME PASSCODE ONLY UPON SUCCESSFUL COMPLETION
+    if (activeSessionCode && activeSessionCode !== "ADMIN_UNLIMITED") {
+      const codes = getStoredPasscodes();
+      const target = codes.find(c => c.code === activeSessionCode);
+      if (target) {
+        target.used = true;
+        savePasscodes(codes);
+      }
+    }
+    incrementTotalUsersCount();
+
+    goToPage('page-transition');
+
+    const avatarsRow = document.getElementById('scale-avatars-row');
+    avatarsRow.innerHTML = '';
+    CHARACTERS.forEach(c => {
+      avatarsRow.innerHTML += `<span id="scale-dot-${c.id}" class="text-xs opacity-20 transition-all duration-300">⚪</span>`;
+    });
+
+    let step = 0;
+    const interval = setInterval(() => {
+      if (step < CHARACTERS.length) {
+        const char = CHARACTERS[step];
+        const dot = document.getElementById(`scale-dot-${char.id}`);
+        if (dot) {
+          dot.innerText = char.avatar;
+          dot.className = 'text-base opacity-100 scale-125 transition-all duration-300';
+        }
+        document.getElementById('scale-avatar-left').innerText = CHARACTERS[step % 8].avatar;
+        document.getElementById('scale-avatar-right').innerText = CHARACTERS[(step + 4) % 8].avatar;
+        playTone(400 + step * 50, 'sine', 0.08);
+        step++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => {
+          renderResultPage();
+          goToPage('page-result');
+          playFanfareSound();
+        }, 800);
+      }
+    }, 350);
+  }
+
+  function renderResultPage() {
+    let topCharKey = 'zm';
+    let maxScore = -1;
+
+    Object.keys(calculatedScores).forEach(key => {
+      if (calculatedScores[key] > maxScore) {
+        maxScore = calculatedScores[key];
+        topCharKey = key;
+      }
+    });
+
+    const char = CHARACTERS.find(c => c.id === topCharKey) || CHARACTERS[0];
+
+    document.getElementById('result-avatar-box').innerText = char.avatar;
+    document.getElementById('result-avatar-box').style.borderColor = char.color;
+    document.getElementById('result-sub-tag').innerText = char.subtitle;
+    document.getElementById('result-sub-tag').style.backgroundColor = `${char.color}20`;
+    document.getElementById('result-sub-tag').style.color = char.color;
+    
+    document.getElementById('result-title').innerText = `${char.title} · ${char.name}`;
+    document.getElementById('result-quote').innerText = `“${char.quote.replace(/[“”]/g, '')}”`;
+
+    const tagsRow = document.getElementById('result-tags-row');
+    tagsRow.innerHTML = char.tags.map(t => 
+      `<span class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80"># ${t}</span>`
+    ).join('');
+
+    document.getElementById('result-portrait-text').innerHTML = `
+      <strong class="text-slate-800 block mb-1">【性格特质分析】</strong>
+      ${char.portrait}
+      <br><br>
+      <strong class="text-sunset block mb-1">${char.advice.split('】')[0]}】</strong>
+      ${char.advice.split('】')[1]}
+    `;
+
+    document.getElementById('result-love-text').innerHTML = `
+      <strong class="text-pinkish-700 block mb-1">${char.loveAdvice.split('】')[0]}】</strong>
+      ${char.loveAdvice.split('】')[1]}
+    `;
+
+    const matchChar = CHARACTERS.find(c => c.id === char.match.id) || CHARACTERS[1];
+    document.getElementById('result-match-box').querySelector('span').innerText = matchChar.avatar;
+    document.getElementById('result-match-name').innerText = matchChar.name;
+    document.getElementById('result-match-desc').innerText = char.match.desc;
+
+    const conflictChar = CHARACTERS.find(c => c.id === char.conflict.id) || CHARACTERS[7];
+    document.getElementById('result-conflict-box').querySelector('span').innerText = conflictChar.avatar;
+    document.getElementById('result-conflict-name').innerText = conflictChar.name;
+    document.getElementById('result-conflict-desc').innerText = char.conflict.desc;
+
+    document.getElementById('poster-avatar-box').innerText = char.avatar;
+    document.getElementById('poster-avatar-box').style.borderColor = char.color;
+    document.getElementById('poster-title').innerText = `${char.title} · ${char.name}`;
+    document.getElementById('poster-quote').innerText = `“${char.quote.replace(/[“”]/g, '')}”`;
+    document.getElementById('poster-tags').innerHTML = char.tags.slice(0, 3).map(t => 
+      `<span class="text-[9px] bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full">${t}</span>`
+    ).join('');
+
+    setTimeout(() => drawRadarChart(char), 100);
+  }
+
+  function drawRadarChart(char) {
+    const canvas = document.getElementById('radar-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+
+    const center = { x: width / 2, y: height / 2 };
+    const radius = 55;
+    const axes = ['热情度', '边界感', '松弛度', '执念值', '情绪外露', '独立性'];
+    const totalAxes = axes.length;
+
+    const rawScores = [
+      (calculatedScores.zm || 0) + (calculatedScores.qz || 0) + 12,
+      (calculatedScores.mty || 0) + (calculatedScores.wzx || 0) + 10,
+      (calculatedScores.ln || 0) * 1.5 + 10,
+      (calculatedScores.wje || 0) * 1.5 + 8,
+      (calculatedScores.qz || 0) * 1.5 + 10,
+      (calculatedScores.xf || 0) + (calculatedScores.bxc || 0) + 12
+    ];
+    const values = rawScores.map(v => Math.min(0.95, Math.max(0.35, v / 35)));
+
+    for (let level = 1; level <= 3; level++) {
+      const r = (radius / 3) * level;
+      ctx.beginPath();
+      for (let i = 0; i < totalAxes; i++) {
+        const angle = (i * 2 * Math.PI / totalAxes) - Math.PI / 2;
+        const x = center.x + r * Math.cos(angle);
+        const y = center.y + r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    ctx.font = '9px sans-serif';
+    ctx.fillStyle = '#64748B';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (let i = 0; i < totalAxes; i++) {
+      const angle = (i * 2 * Math.PI / totalAxes) - Math.PI / 2;
+      const x = center.x + radius * Math.cos(angle);
+      const y = center.y + radius * Math.sin(angle);
+
+      ctx.beginPath();
+      ctx.moveTo(center.x, center.y);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = '#CBD5E1';
+      ctx.stroke();
+
+      const labelX = center.x + (radius + 16) * Math.cos(angle);
+      const labelY = center.y + (radius + 12) * Math.sin(angle);
+      ctx.fillText(axes[i], labelX, labelY);
+    }
+
+    ctx.beginPath();
+    for (let i = 0; i < totalAxes; i++) {
+      const angle = (i * 2 * Math.PI / totalAxes) - Math.PI / 2;
+      const val = values[i];
+      const x = center.x + radius * val * Math.cos(angle);
+      const y = center.y + radius * val * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = `${char.color}40`;
+    ctx.fill();
+    ctx.strokeStyle = char.color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function startQuiz() {
+    currentQuizQuestions = select20Questions();
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    calculatedScores = { zm: 0, mty: 0, ln: 0, xf: 0, wje: 0, wzx: 0, qz: 0, bxc: 0 };
+    renderFootprints();
+    renderCurrentQuestion();
+    goToPage('page-quiz');
+  }
+
+  function initLandingCircle() {
+    const container = document.getElementById('avatar-circle-container');
+    if (!container) return;
+    container.innerHTML = '';
+    const radius = 105; 
+    const total = CHARACTERS.length;
+
+    CHARACTERS.forEach((char, index) => {
+      const angle = (index * 2 * Math.PI / total) - Math.PI / 2;
+      const x = radius * Math.cos(angle);
+      const y = radius * Math.sin(angle);
+
+      const item = document.createElement('div');
+      item.className = 'absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer transition-transform duration-200 hover:scale-125 hover:z-30';
+      item.style.left = `calc(50% + ${x}px)`;
+      item.style.top = `calc(50% + ${y}px)`;
+
+      item.innerHTML = `
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white border-2 flex items-center justify-center text-xl sm:text-2xl shadow-md transition-all duration-200 group-hover:shadow-lg" style="border-color: ${char.color}">
+          ${char.avatar}
+        </div>
+        <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-800 text-white text-[10px] px-2 py-0.5 rounded-full pointer-events-none shadow">
+          ${char.name}
+        </div>
+      `;
+
+      item.onclick = () => {
+        playTone(600 + index * 40, 'sine', 0.1);
+        alert(`【${char.title} · ${char.name}】\n"${char.quote}"\n\n${char.tags.join(' | ')}`);
+      };
+
+      container.appendChild(item);
+    });
+  }
+
+  function initSilhouettes() {
+    const grid = document.getElementById('silhouettes-grid');
+    if (!grid) return;
+    grid.innerHTML = CHARACTERS.map(c => `
+      <div class="bg-slate-100 rounded-xl p-2 border border-slate-200 flex flex-col items-center justify-center">
+        <span class="text-xl filter grayscale contrast-200 opacity-60">${c.avatar}</span>
+        <span class="text-[10px] text-slate-500 font-bold mt-1">${c.name}</span>
+      </div>
+    `).join('');
+  }
+
+  function initCompendium() {
+    const list = document.getElementById('compendium-list');
+    if (!list) return;
+    list.innerHTML = CHARACTERS.map(c => `
+      <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-3">
+        <div class="w-12 h-12 rounded-full bg-cream-100 border-2 flex items-center justify-center text-2xl shrink-0" style="border-color: ${c.color}">
+          ${c.avatar}
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <h4 class="font-bold text-xs text-slate-800">${c.title} · ${c.name}</h4>
+            <span class="text-[9px] px-2 py-0.5 rounded-full font-bold" style="background-color: ${c.color}20; color: ${c.color}">${c.subtitle}</span>
+          </div>
+          <p class="text-[11px] text-slate-500 italic">“${c.quote.replace(/[“”]/g, '')}”</p>
+          <div class="flex flex-wrap gap-1 pt-1">
+            ${c.tags.map(t => `<span class="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-md">#${t}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function initStatsBars() {
+    const container = document.getElementById('stats-bars-container');
+    if (!container) return;
+    const percents = [18, 15, 14, 13, 12, 11, 9, 8];
+    container.innerHTML = CHARACTERS.map((c, idx) => `
+      <div>
+        <div class="flex justify-between text-[11px] font-bold text-slate-700 mb-0.5">
+          <span>${c.avatar} ${c.name}（${c.title}）</span>
+          <span style="color: ${c.color}">${percents[idx]}%</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+          <div class="h-full rounded-full transition-all duration-500" style="width: ${percents[idx]}%; background-color: ${c.color}"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function copyShareLink() {
+    const text = `【后会友期·性格图鉴】测一测你最像四对旧友里的谁？我测出了同款性格，快来一起测试吧！`;
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+    playTone(880, 'sine', 0.15);
+    alert("✅ 专属分享文案已成功复制到剪贴板！");
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    initLandingCircle();
+    initSilhouettes();
+    initCompendium();
+    initStatsBars();
+    updateCounterDisplays();
+  });
+</script>
+</body>
+</html>
